@@ -240,12 +240,18 @@ export default function Portfolio() {
   }, []);
 
   useEffect(() => {
+    const els = Array.from(document.querySelectorAll<HTMLElement>(".fade-up"));
+    const timers: ReturnType<typeof setTimeout>[] = [];
+    els.forEach((el, i) => {
+      const t = setTimeout(() => el.classList.add("visible"), 120 + i * 60);
+      timers.push(t);
+    });
     const obs = new IntersectionObserver(
-      entries => entries.forEach(en => { if (en.isIntersecting) en.target.classList.add("visible"); }),
-      { threshold: 0.07 }
+      entries => entries.forEach(en => { if (en.isIntersecting) (en.target as HTMLElement).classList.add("visible"); }),
+      { threshold: 0.05, rootMargin: "0px 0px -30px 0px" }
     );
-    document.querySelectorAll(".fade-up").forEach(el => obs.observe(el));
-    return () => obs.disconnect();
+    els.forEach(el => obs.observe(el));
+    return () => { timers.forEach(clearTimeout); obs.disconnect(); };
   }, []);
 
   useEffect(() => {

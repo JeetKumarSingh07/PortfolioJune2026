@@ -179,7 +179,9 @@ h1 { font-family: var(--fd); font-size: clamp(2.2rem,4.8vw,3.8rem); font-weight:
 }
 .stat-label { font-family: var(--fm); font-size: .64rem; color: #7d92ad; font-weight: 400; letter-spacing: .07em; text-transform: uppercase; }
 
-section { padding: clamp(48px,8vw,88px) clamp(20px,6vw,80px); }
+section { padding: clamp(36px,5vw,60px) clamp(20px,6vw,80px); }
+#about { padding-bottom: clamp(28px,3.5vw,44px); }
+#skills { padding-top: clamp(28px,3.5vw,44px); }
 .sec-label { font-family: var(--fm); font-size: clamp(.6rem,1.4vw,.65rem); font-weight: 600; letter-spacing: .17em; color: var(--accent); text-transform: uppercase; margin-bottom: 8px; }
 .sec-title { font-family: var(--fd); font-size: clamp(1.5rem,4vw,2.4rem); font-weight: 700; color: var(--text); margin-bottom: 12px; letter-spacing: -.025em; line-height: 1.15; }
 .sec-sub { color: var(--text-muted); max-width: 560px; font-size: clamp(.82rem,1.6vw,.9rem); margin-bottom: clamp(28px,5vw,46px); line-height: 1.72; }

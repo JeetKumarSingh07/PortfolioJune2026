@@ -365,8 +365,8 @@ export default function Portfolio() {
         <div className="hero-inner">
           <div className="hero-photo-wrap">
             <div className="photo-hex">
-              <div className="photo-inner">
-                <img src={PHOTO_SRC} alt="Jeet Kumar Singh" />
+              <div className="photo-inner" style={{display:'flex',alignItems:'center',justifyContent:'center',background:'linear-gradient(135deg,#2251e3 0%,#7c3aed 50%,#04b6ce 100%)'}}>
+                <span style={{fontFamily:'Clash Display,sans-serif',fontSize:'3.8rem',fontWeight:700,color:'#fff',letterSpacing:'-0.04em',lineHeight:1,userSelect:'none'}}>JK</span>
               </div>
             </div>
             <div className="chip"><span className="cdot" style={{ background: "#2251e3" }} />Python 92%</div>

@@ -1,0 +1,8 @@
+services:
+  - type: web
+    name: portfolio-site
+    runtime: static
+    branch: main
+    buildCommand: pnpm install --frozen-lockfile && pnpm --filter @workspace/portfolio build
+    staticPublishPath: artifacts/portfolio/dist/public
+    autoDeployTrigger: commit

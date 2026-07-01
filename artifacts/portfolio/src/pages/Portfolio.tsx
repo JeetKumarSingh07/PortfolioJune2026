@@ -1,8 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import "../portfolio.css";
 
 const PHOTO_SRC =
   "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAGQARgDASIAAhEBAxEB/8QAHAAAAgEFAQAAAAAAAAAAAAAAAAEHAgMEBQYI/8QATxAAAQIEBAMFBAcGAgYHCQAAAQIDAAQFEQYSITEiQVEHE2FxkRQygaEIFRZCUrHRIzNicpLBQ1UkJYKy4fAXJlN0k6LSJzQ1N0RzdcLx/8QAGwEBAQADAQEBAAAAAAAAAAAAAAECAwQFBgf/xAAxEQEAAgEDAgQDBwUBAQAAAAAAAQIRAwQhEjEFExRRMkFSFiJhgZGh0QYjcbHBM/D/2gAMAwEAAhEDEQA/AJ9UkZTpygCU5RpApJyniO0ASbDiMAglOZWkCkjTTnAEnMeIwKG3Ed4B5U9ISEpyjSHlP4jCSnhHEYAyjPtygWlOU6QWOf3jtAtPCeIwDyjpCSka6c4eU/iMJI34jvABSnMNOsMpTlOkIpOYcR5wyk5TxGAAlOUacoQSnMrSGBwjiO0IJ4lcRgBSRw6c4eVPSEoHTiO8PL/EYBJSnKNIMqc405QJTwjiMGU5hxHaAFpTkOnKHlHSEscB4jtDyn8RgElKbq05wKSLp0gSnU8R3gKdU8R3gGUi20JKU5Bpyh5Tb3jCSnhHEdoACU5jpyEW5pxmWllvvKCGmwVrUdgBqTFwDiPEdhGBXKQ1XKO/TX332mXwErU0QFWvtqOcWuMxnsk5xw861Kbm8bYwccZBLs8+GmU/gRsn0Gp+MdR2g4Uaws7S5ynoKZUtCXct+NI3PioX9IkLDnZtR8NVRNQlXpp15KSlPfKSQm+5FhvaN5XaDKYjo7tOnSsNLIIUgjMlQNwRpHrW8QrXWp0fBEYedGztbTt1fFKKWpWh4sYYqFVxR7JOIbDK2XcpFk6Ai9tCNT43jv6JVMK0aks06VrMksNjVRdAK1HcnzjRf9DVHCrCpT//AJP0h/8AQ7S0HMKpPaa6hH6Q1dXa6lemdS2I7Rg09PcUnqikZ98pGQW3GwtBCkqFwQdCI4XtDppk8MVesylQqkvONpSpHczziUJOZI0QDYaeEdtKywlZRmXStRS0hKATuQBaNbiWh/aLDs9SfaSx7SkJ73Jmy2IO2l9o8ifwejHZz07PyuF6y1S5B5cxPzTBeUatVVhhlsG2YleY3J0ASL6G9gItJxvT5d6aROU+TdrDXddwKe+h8TRcV3aAhywKTm0IUBYa6iN5XMMGo1OWqsnNIlqiy0WM70ul5t1onNkWg25i4IIIuesWF4RenqbMMVOoNl5Tjb0u7IyiZf2ZxBulSfeJN98xI5WgpuOV52WdaqlIp3sjjK7rl5suFohJIzJWhObXS6efK0EZDNJrzpCZ+vMuS/dqSW2JENly6SLqJUra97JtBAb9QVlOo26QAKsNR6QKJynh5dYATYcPzgEArMdR6QKzabb9IATmVw/OBROnDz6wDsrqPSEgKyjaHc/h+cJJOUcPzgDiz7jbpAvNlO3pBc5/d5dYFk5Tw/OAdldR6QkhWuo3h3P4fnCSTrw8+sAEKzDUc+UMhVjqPSEScw4evOGSbHh+cADNlGo26QhmzK1HpDBOUcPLrCBOZXD84AVm01G/SHZXUekJROnDz6w7n8PzgEnNlGo9ILKzDUbdIEk5Rw/OC5zjh5dYAXmyHbbpDsrqPSEsnIeHl1h3P4fnAJIVdW28Cgq6dRvACbq4efWAk3Tw8+sAyFW3HpCSFZRqNukO5t7vzhJJyjh5dYAGbMdthygUFWGo3EAJzHh5DnAomw4eY5wDsrqPSEnNl5b9Idz+H5wkk293n1gDiz7jbpAvNlO3pBc5xw8usCicp4fnAOyuo9ISc11ajfpDufw/OEkm6uHn1gA5sw1HpDIVbcekIk5k8Pzhkm3u/OASc2UajbpBAknKOHl1ggGpQynQ7dIAoWGh9IFKGU6jbrAFCw1HrAIKGZWh9IFKGmh36QwoZlaj1hKUOHUb9YB5h0PpCSoa6HfpFWYdR6wkqGuo3gEVDMNDz5QyoWOh26QioZhqOfOGVDKdR6wAFDKNDt0hBQzK0PpDChlGo9YAzDPsdukClDKdD6QZhn3G3WBahlOo9YB5h0PpCSoa6HfpFWYdR6wkqGuo3gEVDMNDz5QyoWOh26QioZhqOfOGVDKdR6wAFDKNDt0hBQzK0PpDChlGo9YAzDPsdukClDKdD6QZhn3G3WBahlOo9YB5h0PpCSoa6HfpFWYdR6wkqGuo3gEVDMNDz5QyoWOh26QioZhqOfOGVDKdR6wAFDKNDt0hBQzK0PpDChlGo9YAzDPsdukClDKdD6QZhn3G3WBahlOo9YB5h0PpCSoa6HfpFWYdR6wkqGuo3gEVDMNDz5QyoWOh26QioZhqOfOGVDKdR6wAFDKNDt0hBQzK0PpDChlGo9YAzDPsdukClDKdD6QZhn3G3WBahlOo9YB5h0PpCSoa6HfpFWYdR6wkqGuo3gEVDMNDz5QyoWOh26QioZhqOfOGVDKdR6wAFDKNDt0hBQzK0PpDChlGo9YAzDPsdukClDKdD6QZhn3G3WBahlOo9YB5h0PpCSoa6HfpFWYdR6wkqGuo3gEVDMNDz5QyoWOh26QioZhqOfOGVDKdR6wAFDKNDt0hBQzK0PpDChlGo9YAzDPsdukClDKdD6QZhn3G3WBahlOo9YB5h0PpCSoa6HfpFWYdR6wkqGuo3gEVDMNDz5QyoWOh26QioZhqOfOGVDKdR6wAFDKNDt0hBQzK0PpDChlGo9YAzDPsdukClDKdD6QZhn3G3WBahlOo9YIAzDofSAlQynQ7dIKGZWh9IAqc+3KBZOU6QZhn57dIFqGU7+kBVc/hilJOunOHmHj6QkqGu+/SACTmGnWGScp0hFQzDfnyhlQsd/SAATlHDyhAnMrSGFDKN9ukIKGZW/pACidNOcR32o0BmakmKlLJMvUg4G/aG91JsSAoc47Cr4kpFEbK5+eaaKdcl7rPkkaxHlTxM/iKnIqqG1okBPmXQ2rknJoo+JJjVrTik4bdCP7kZRhNfaIrGefLqm/dvcRq5huuTq7zE1cjYXMSNNMNL40DfnGock7OXtoI4I1pen5MNBR6MWJ+Xmnip55txKkg9b8onGRqsvUVzDbRKXpdwoeaVbMg/oeRjkMPUcIZFVmkZEJuZdKh71t1+Q5RG71bnxiWYq0pMOMOuOlSSk/d5A9RaO7Z699OZme0uHdUpOIq9BAnXTnASbjSIzpvaVPpIRPSTLw5qbJQf7iOrksa0icyhxxcso8nU6eoj167jTt83BOnaHRa9IBew0i21MNTDedlxLiTzQbiLgIsP0jdnLBu6IT3Dun3v7RcrWlImF5SFNgOJN9lJIIPyi3RFDuHf5unhF2tqBok5v+6PKPM1vjlur2Z3+zGsrlTVRqHNVBLIdLCc2QqtfW2/xjKmqnIySwianGGFKFwHXAkkfGNFjCYZmcDVF1h1Dram+FaDcHiHOMtDT6tWkWjiZj/aXtiJx3YGF8dOYirBklU9DADSl5w6VbW5WjsHn2mU/tVoRfbMsD84gvDNUdo8xPzzIBdblFBFxcBRUkA/OM/C9BOMahOO1KefPdJClKvmUpRJ67DSPb3nhWlW9tTPTSuPx5cunuLTER3mUygsvpzpDbg/ELK+ccfWati+WrD7NMprDskkju1qAudBf7w535Rwc/7XgbFDrMhOOKS1lXroHEkXsobHpFvGj3fYtm3U3AcDawOl0JMNt4XEakTExatq5jMf4+WfxW+vx7TEpvDosjOUhZAuMw3tDcmGWrBxaEE7BSgLxC2OnFtYudcQpSVIaZUkg7EIBjKxThVyn0WXrMxUXZuZmFp70OJ5qF9D4Rz18KpMac31MdfbhlO4nnFeyYknhGnLrBEOyOJ6jIYCdZZfWHDN9w25e5bQUZiAfy6XgjKngWtebfejicE7utccJhQ8h1sqSfAg6EHoYrChYaiMaaS22C/wB4hleicyzZKugPX84uMvhZ7tacjoGqTz8R1EeI6l0EZjqIFEaajeAAZjpAoDh05wDuOohJIyjUQ7DpCQBlGkAXGfcbQKIynUQWGfblAsDKdIB3HUQkka6jeHYdISQNdOcAEjMNRzi1NTcvJy6npl9tlpO61qAAi6QMydOsRP2t1ctVGQpwPAlsvKHiTYfl84krDpql2kUiUBRJpdnHBpdIyo9T/YRxFYx7WqkFIQ8JRk/cY0PxVvHGJnbnWK1ugpHnrGPLLhizbzj5Knb5s2+a5V4x12Hqg45S2aIppH1e6FvTCwklaVlVkkeWUesce/q4kdVRL3Z3IMnCjLq2Ud6p1ZKram5jG8ZjDKs4nLWv0IoaFr5Vag2i0ijpYbcdWjvAkbK0HxjuZpl2Wl1IUltyWHupKbKBPQxrRTpmoFoOpS3LpVm7sDc9SeccU6GLcO31GauRrlYmmcNTYmM5WpHdS6yLWB0t6XtEXIQknKdL7RKvalMoladJyLYAKlFxVugFh8yYjGXQCi5Gh6x2UriHFa2ZVSsuG3brdWtahoDoAPIRsE2TGFLqzqU9sDonyEUPTYBKUnWM2LbNTbjF1NPLbPVCiIy0doFWpikJDomkXGZD2pt0vvHJrnFZt9Nz5CNQ68Zh9Rcb70E3ICiLRYtavaTieJetsLTbNQobFQYWCzNIS6nqLjUHxBuIy62R9STmo/dGOC7EJ4TGCnZNTgWZSaWhIJ4koUAoX+JMd7WwPqSc0/wjGc2m05lhjHDQ41wicSssuyzqG5ti4Tn91aTyPSOK+yONBTzSx/7iVX7oTKcm9/PfWJan56Vpkg/OzrqWZZhBW44rZKRzMcye03BTcu28vEMkG3CoIVc2JG/LxEd+38S1tCkacRExHbMZw030K2nLW4c7PUycjOoqrqFvTbJaytG4bTcG9zubgekaqWwlizDU667Rn5d5CxlKgoDMOV0q5xtKj2t4fYS6qkpdq/dSrswpcqOBGQpuFEjT3uh5dY6aSxPTZ+nVCbPfSqaeSmbRNMltbNkhdyDyykGLHim46rTbFot3iY4PIpiMcYcTK4CrVZrBn8QzDSUqUFOBKgpawPui2gEU4nwRWaniOanJNlgy6ynJd4JNgkDb4R21ExlhzEk05LUeqy84+2jvFoavcJva+o6kRuxa5059IseLbiL9cY4jERjiI/8AoT09MYRhizBVaq1edm5RphTS2m0gqeCTcJAOkdJi6hT1XwtKyEoltUw2ttSgpYSLBJB1jqza40+UPS23yjXPiGtPl9vudmXk15/FHNIwFNOYXnabUy2w8uYS8wtCgsJITbX5iCJGQBlGg2gjZHi26i0zW2M89mPp9OYiJhG7uE6vMSb7S2ErCcjiFPzV3HFBQJBIOU6X1IBvHfS8uhcgw24wpkpSLILmZTZ/mvqfGIT+22JP82e/pT+kH22xJ/mz39Kf0j1Nbwnd60RFrV4/y0V3GnXtE/sm3O4wsh27jf8A2idx5j+4i/mQtKVJUFJJ0IOkQX9tsSf5s9/Sn9IpTjLEKVKUmqPAq3slOvyjm+z+4+qP3/hn6yntKebD/kxSgDKP1iCvttiT/Nnv6U/pB9tsSf5s9/Sn9IfZ/cfVH7/AMHrKe0p2sP+TCSBr59Ygr7bYk/zZ7+lP6QfbbEn+bPf0p/SH2f3H1R+/wDB6yntKdVAZh8eeed+1SdMxjudCTdLLaGU67EJufmY2f22xJf/AOLPf0p/SI/rE6/OVKYmlanXnHCpazuTHDvvDtTaRE3mJz7N2jrRqZwrZdzNJVfxjMbdCkkEjaNHJPFaVovqlVoy213Nrx5ze2DrqSUqB1FjE2dnT7bmEZdAIKkrUDb+YxAZOQ2PmIlDslqwCpymrVxGzzY+Sv7RJVKawXXBmtkB0EXLWNh7vSLTabDfj3NzFmrT6KZSZqbWSEsNKWT4gafOJAhPtJqgqGK32G1BTbFmRY9N/neOWcX3TKGk+8ve3Ic4wXpxb0268pR1UVKJ+cY4mVuXeCveGg6CKM9x9RsEmw6RiLmEpWddYwnXXSfeMYrjhFxc+PjBGUHy6p6x0tYfGKL5BYHSLEkQtDovbi/tF02Btaw8YDueyiuuUrH0k0XAmXnryzoJsFXBKfiFDTzj0bWwPqSc/8AtHnHjll5crMNvIJAQtKwobpIIN49fz0y3O4WcmmXUuNPSwWladlAi9xFqWbYpBGovEOYfotQw9hbEFX+zL8xiBFRmhTUli68rpACgPwcz5RMlj1MUpBy784yYuHwv2b0mRwrIyFZkZeenhmmJl11Nyp5yxXrzGgH+yI6WebZo0jUahJUpc1MuWddZlgO8mFABI3NibAfARs7HONeUCwch1MBB9eoWIsWTuLa1SqNUqcH6dLy8q3NAMPOrQ4lSglINxok+cXcQLxNiWqtzMlh6vSLDVBm5Yh9GQrfLZygAKOt7AE78om23jFKRqrXn0gIZZwhXKPLYLn6MiqorDyMlUW++44lBU1/iJJIACj05Rr8MYexU3XKT7Y1WJKrNzRXOzxYcdbeRckhbhfKFJUNBZAI6ROxBunWGU6b/KAEgZR+sECQco1O0EB50kaZPVJTgkZR2YLYzLDYvlEW5WTmZ6ZEvKsOPPG9kIFybR3fZWM07VU9WED5mNm7T/s/hSbXhZbU3NpUUTk0ghTiQN8oG1unx1j7TW8SnT1raOOeMe3PvLzK6PVWLIxmpV+SmFS8y0pp5HvIVuPOLMdrTKXJTXZxVam9LIcnm3FZX1aqHu8/iYpw5SZGbwPXJ6YlG3JhkK7l1Q1TZF9PjG+fEK1rabR8MxX82HlTMxj5xlxkESVXmMN4cp1LmXKC1NPTDQOXOUp90Ek9TrBX5XDGH5aTqiaH7QZ5IKGFOkIQLAk2111Ea6+KRbpxpz97OO3OO/zZToYzmeyNYIkSsYbpxnaFP0ykreanhdyRS4UgjLmve+lr68o2cjhyl1R5+RnKFT5JQScipWdDjqT4gRLeL6VaRfpn9sxzjtkjb2zhFEESLJ0mhU/A66lUqamadYmFt3SSlThDhSAT0jg6hMMTU+8/LSyZVlaroZSbhA6R1bbdxr2tFaziOM/JhfT6IjMsaOVmjmdUsEXvHTuqytLV0SY5CYuVXjwv6itzp1/z/wAdeyjiZYbb5aqWW/vj5xswuxCxzjnp1RamkODlrG1Q7cDXTlHzTuhsivvEaHUaiNrhar/U2IpKev8As0LyufyK0P6/CNE0qGFWc7u2i9v7xB6jkXQ+tx24UCrQ/COH7Wq0qQw+JFDhKp1djrqEJ1PztG07PKkqqYUlyFXdZ/Yu665ht8rRFXavWhN4nfaSvMzJgMpsd1D3rfH8okLLhlXcV3I1B1X4DpFx1YGgPpGMhRZaJWeNRuYsrdLh3iipx697RiOLISb7mLxATvGK6q94Iu050AuD+KNirKrhGkaWQVZ9SepEbVRssmLJABLK7EXTzEekeyWYRVuzZuRcczpYcXLmx1CCbgfOPOAIcT/FEt9hFaLNXqFFV7sw2H0DopBsfUH5RI7rPZPXF4Qk5rcodz+Ewkk2909xmwHFnG20C82Q7QXOf3TtAonKeE/KAq4vCKU5rnbeHc/hPyhJJurhO/hABzXG0M5rcoRJunhMMk290wCTmyjbaCBJOUcJ28IICB8P4gncMqfeYlEOCZQEXdCgLDXQiLFCxDPYfnjMyakkL0caXfIseP6x3tTk6bNYBoKqpPqk5dtCCChGdSyUkWAjlcRYVlqZSJWsUyeVNyEwoJBWmygTe35GPs9Hc7bWtaNSuJvOPnicdufd5lqXrETE9iksbzdPmppcvISiZWaOZ2UIJbzWsSOl+Y2i7MY9nH6ZN05FPkWJWYQUBDKCnICLEjqY5OCOydhtpnqmvP5/Jr868cZbqu4lma/LSTD7DTaZRGRBbJuoWA1v5QVrEszW5CRlH2Gm0SacqFIvdWgGt/KNLBG2u10q9OK/DnH592M3tOcz3dQnHdTbRTAyzLtmQTkQbE5xlykK18OUXpfHjsnPuTkpRaYw89cvLShWZwnxvprHIwRqnw/bT3r/ALZedf3b6YxVNzOH3aOqXZDLjxeKxfMCV5rdLXMaGCCOjS0aaUTFIxnlha027sedVlk3T4WjlnOJREdLU193IrPMkCOZeQ0y33jruvRMfJ/1BbO5rHtH8vR2cfcmWmqViNtoyJF0OyyDzSLGMSdcDijbRPIGL9Maddp12gCQsg9Y8J1M9t8IULnSM05Zhn9nooagg7GNchpV7OotFxrO2u7R25QV3nZ5jFvD6qq3MqKe8ly4hN/8ZI09QflEdT08Z+ecmFrK0hZVc/fUdzFyoOKccSA2ULcTZX8Qvyiw3LkWKkEAbC1ogpS25MKudouKQ2ynXVUXFd5bh0HhFhYygk3JgLCzm1J0jGXxmwBsIvhp19WVAJEXJhoSjWQ2K1fKAyKFQHqjJ1afbWEN02XS+5ce9dYTb5k/CKmnW7ZXRoecSH2UUJVcwHjaXZJMy80httAtxEJUoD4kRGKX5TMUPNTHeg2UkDY8xaKjOXK3SXZdWcdBHU9l8/7J2iUhwnKpx0srHUKBH6Ry6UyaABL96tzchC8pHrF6k1d2UxDTpjIG3JeZbcupNibKG5iSyeywoW/4QkqFvj0hpWlaApKgQeYMCCMu/OM2BZhnHl0gUoZT+kO4zjXlAsjIdYAzD/kQkqF1efSKrjrCSRdWvOARUMyf0hlQt/wgJGZOsMkW3gKUqGUeXSCGkjKNeUEBCVcxFJ1LCdIpbCHg/J27wrSAk2TbQ3gncRycxgKSoaEPCaYcC1KKRktdR0N/ERy8EfoFdjpRFYj5T1fm8edW05/HgQQQR1tYggggCCCCAIIIIDWVhl2YZbabUEi5JjnZsNSrRC5hK1/gtmjo6uQENZlqTYkjLbX1jQreacBtLsqVzubR8P41Od7b8v8AT1tr/wCUOfmVtqRfLY9do3lJYWzKMqAsFC6gfGNVNtuTE022G20JUoAhOukdIl9tDQQLaAWPSPKdDIclmnhYpihTTEo2VqG0Pv8AKjlbkY1r7qpl6xJywVQF+1ud46kGxskEbCMghDgykaiKS1kAA5GEUkG/OIKXJJ212zcecUNUhx1V3lWEZbbyhpFuaqCkpKUi1ucEWZpyXpjFmwC5aNIUOTClPOHyjLyh93vHUrUeQtpA+o2ypRYQEr/R6qCUVms04kftZdDyR4pUQf8AeEcn2g0yYT2g1xUwmT7tUxnSG0fdIFvd59b63jH7Ma+zhzGiZuYV3TRlX0FXiU3SPUARYS33ji5pZBfWsrWrOQSo6m8X5J82q9nkCi3cKDo6JtfyvFtlpEzMNyTSHVLdWG0hw3IJNhb1jNnX3nAU5UDxIjrOyLD669jdiYeGaWp3+kLVbQq2QPXX4RJWHpJiQZal2kFAC0ICSpPCSQLcorSy6kcDuYdHEg/MWi+Ei3P1hJSMvPfrGbFY7xaF/tWDa27fEPTeLiXGXUHu1JURuOY+EV5RnG+3WKHpdpxJK0XI2N9R8YC5lT0EJKRdWg3iz3Lrf7t0qH4XDf57/nCS+lJIeSpo33UeE/HaAvlIzDQQylNthCIF07+sMpFufrACUjKNBtBCSkZRvt1ggOeOBMNgH/VbW34lfrAMCYbsP9Vtf1K/WOiVmynQbdYBmsNBHR6vcfXP6yw8uns5wYEw3cj6ra/qV+sBwJhsW/1W1v8AiV+sdEM2ZWg9YFZtNBv1h6vcfXP6yeXT2c99hMN/5W1/Ur9YScCYbIB+q2v6lfrHR8XQesJObKNB6w9XuPrn9ZPLp7II7WKPTqTV6dLU6VQzmYUtQubE5rC979IjiccWWi2pxKdP8MCJI7ZXv+t8ulSuFMokWHUqVEcTQLUqt0kAWsPGOfe9r26rTmWyIiIjDTSLKfRPMqLKiJuL6Rt3pS2jVqSshKUp8gL/rGPJrhxIIUrMrJzHWOsahYZ/vC7RHvGCo8r2T0OhtoVmZJWk3JKsgPzjaSUoQlCEJSkbJSLAfCMVIWp3vCSpPFuOYjU5H0jnSTcnYdR+0b6bYXNNNqdUhKEqIJOg5muiCWljZ6bFSLqPgDYfOIrncFVKQqcu5SpSaefC+6emXFJWkZQWiSMxQFkZgLhOq8pzXgPnhvjdOKUjNjFMp1xMbpSPbHd4dMJw8b+MHy9PtD8fbGBrGGpI5oasL62eO5K+W3y33+iLYlYxjiijpdbYkmW15HJhQZaGa1nEgEDqNiI3KcOVvGWJpqo1RctKsuMy0rNKKUMLV7zrSE7FOQF8pAN8xzHQ6RmwxinENZNRnKpMTFTp0xNKU4p2SYSt1skJFjlF7W1Ej5YFr9IrrO9Y9p3e7XW88d9l46Zjzv7b2txpJMQy2DKk/MUeflHVB0LaUhAF7fvDkTY6j4Ro51ykuyU6W2mlI7tlMw4QkpKj3aVWFjbnzB8okGcwhiCj1h6q0SYU3NpHdqmHC7lLaiFAqBtzGmkb+q9oExWKHJvU5iqSb0iuWaEpMhbKkJ/Z5V5gDofHqDFeHq3TsYS1Unm5RIZdW6l6VcW2+4l1OV5LiT7waKFhJI2JuNY9Fl5dDpv2WT4Rp+sYf5jUmvTtk0fhMd5hH4U7kqpStcmJqVpk1NPKUl5QZPCVd2PdBuCbnU8ucbi01I6sWJXbmBkAjBYVtV5Kl0enTalPkOPsy6EKKFgkhWUcY5GOGpq7M6y9V6fIMuMpcC0PFbjq2yQsBQ2AJST69YiGbpOJKmw3ianTlCYq7T7X7OsraKXBxl0KzE5xm1FwCLjS0bnFGIcT02jVCpPMU2bZU1VHHnXm23WXSEBaU6ZrlPMi+msalq1lp0itaxbPmzH7LbfZBkMX4cxGGdqb22vwIoTzJr0wnF9bpbMqulKlHuFd6yL/iEe4VKVqD2FhhtcxT5ySqKG0d2hVwrMk3BUNLaWMdJM09PaLiGBStJUEFzKMxAuRflGdTsBjCkVqiVSlVGFNkRtpSmkLdXNJWcqHmVFSV6qOdJ9eMUiMKVBvGT+KGqi0zT2pVbCUPKBWl1eqqwbbdOcSlNMRr7mG69WuJHOYmr0vW2JybVLFNRaKpGq0NKSy2y0g8bk7c/GIXjqlWVbBFGm3uKbrMlWaVLuoqEmpuYaZWoIWpBJSk2BsNoqalRa9hmhyNXqkmmqrqpaSFp1tlTRKFJUlexBBFiPjGC7DM2N7Y7V6cFMY6wfQK1/2T7I10rjdTl4hqnMVurSNLiJWq0pJXRnhzLfMRmKzqQPERopkxjijS9Lno6j1maQzTqwqZMqUh5RLiFPWCQcqla3G3OPWvZ/jbHFEx5U8N4sq9FrsvT5czSmKpT0rDrUw2C6ApCVHMlWVJueShGfh2arFVvBrFK/YqXimuSdOp4pFTMqFmRZ7lthFu6QUjKpOVIDiRcZiN9b3PKptXqYvXvuRpHK2mjHlntjJHFp79tG8Md3XvPl1/3a8/0KzJjGlMTbFSmJZuUlZioSqVPGRlDqj3SiQEt5rlWQKOoFzfQHSPINPxJhvD1JrMq5R6i1KTdSdm6fLsPNFX3agVZxzBsokA7XGsb/DuC8YUqt4HosjXpBmiVCQWxMVcuOqeKXFZ1ANtJQkXCSSM24NjbMMLVWi4IqtBqMhInYaUX3Kw99c5JbadWzxf4uMKJI36GF7Y09NI9PbExEYv7NVQvtGLx7bfNnuL0gK4cOUbXe3MBV7RnqPbTiL5lx60e3DcjdDN1E/Knge02j0xbWtHp0D0vMy+VDuYRnI6RJVvh+VpC0yVNcmJhbL0mpKLXbdS0MqxpfbKUq3uNDyjdTFGwlM4bYxVIyMtVp+RqKJhcsTVx5Fxty5y3tkSSOh9LRzrjmHqxirD07XaVKNJnnGnUGkBxLDq2i03lB+7xA3ydAe8cLW0SqxX7bSZ2zXp1TuBLJLRnMSvHOJZuoXHDtbrQZJjGCK3TKo3hysVqnuSjUqXHfyh1haC4W0q1sdwLi2k3eMtSfhbFMjU5CJkUpiSSHkABJWHUpsbX94bm3WO5wsxhisYawJiOjyEm5JNSlSp06+J1IfS8l5SACClOmQ8+sZfEeGMX1CuUbGsj3ZxbFPmO5nJaQcW3MfkKSM1tQCQDbTpHPVPbUr0vbFqvVWY1Zjb6/eesSZPiHZEd3Vqf4eWvpHrTBLlMqqJxqpLkpNEoXeXJuWt/fjrAJy5x7UfFa1OWS4hyW7xoXUkqyEpJGbcfKLbhhhxlVkS+cqW0tuWt8YsRa5H6Q2yMisgjLs4paA67iOqQBYDce5E7YtUdSqKXYt5VCKvW5Zu0EJO2HMjMEHKNf5CbKHwELZm24oqW+tN1H4WiVyZSrgbHf8A1Rbp9VeodXkqxJuqdkqxKsy8qlJuVpJCkqG25B3iNKxRJNbfqkzIVFqiTM/MqemGmy1lSomxy7Xv5RaRhFjEJq9Cq7OJMByVJWqeRTqM86Rl7pxwpS4tKeEWKcoAJub2sLjS8bqpHVUXasYdKiJvFfbFoMSd4mHiuZlqXFtEe76Rn9sRjHl+mZkV1CWNQ1i+k8p8/rHmLF9UxFV6e1T6RMIl6LDvV6Vcm27ISpvhCEoHxJPXlpH7BFKK7M/w4JqRjvEmIcS4u9i6JiSqy9IqkumkTtGly3JhiXS6FOIl2wSG1BGYnUk3JJ5RjYqos5hnGlQxJJVN6RpsxQH6W5TmHnFqbQ4kEozsqUBzBGqiNBHL3DqZFUiI1VXXDf0i0b3DXDalWkz9J8UqQEqVoFDWJLruiijXF7kpVcPt06RjKhV6Ro6ZOUlWVRbUhFrqKvEA63jZYTr9anMJ1aQqVQdqFXU1MomqlOLJK1OJKgEk7JTy5a2j5S7JzZrEh0vGUxJSbVNam0IkpNBWVpWoZXLBW+ug5x7Awdg+VwXgu0lTZZ6VbGQNpCipSEJKjbXQam+vkBFKRHFt1htCuJPSxeJLJT1+VuarFKvNVNjbtbGrm7dNc4xnHJLtPdlb3fW8RJNMbkTMUyXy+7t3tHRt02B97X/AEjXN01bAaWkPFWYEjKcpBHjHkjFNIWqXaakZMuBBSm4LIBU0bXBF9vZsQPCPUmGccY3bcpsvWZWhVqXmpcTcnTmlNIWw30UVqIylRKdEg3N+kee+1DDuJsH43qeJIGiuT9JqYVMy9RkIZlIpD6FBTt29AAQSSO7I2AvqAA5wbNWfI29XkLfqMT3MhB3dQlxh5pSNOJ1n+UWa7SlU9HiP/Z";
+
+const WEB3FORMS_ACCESS_KEY = "c4105533-903c-4baa-ab30-f632c165e286";
 
 interface GhRepo {
   name: string;
@@ -318,13 +320,41 @@ export default function Portfolio() {
     fetchRepos();
   }, []);
 
-  function handleSend() {
-    const n = fname.trim(), e = femail.trim(), s = fsubject.trim() || "Portfolio Contact", m = fmessage.trim();
+  async function handleSend(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+    const n = fname.trim();
+    const e = femail.trim();
+    const s = fsubject.trim() || "Portfolio Contact";
+    const m = fmessage.trim();
+
     if (!n || !e || !m) { setFormStatus({ type: "error", msg: "Please fill in name, email, and message." }); return; }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)) { setFormStatus({ type: "error", msg: "Please enter a valid email." }); return; }
-    window.location.href = `mailto:jeetkumarsingh07india@gmail.com?subject=${encodeURIComponent(s)}&body=Hi Jeet,%0A%0A${encodeURIComponent(m)}%0A%0AFrom: ${encodeURIComponent(n)}%0AReply to: ${encodeURIComponent(e)}`;
-    setFormStatus({ type: "success", msg: `Mail client opened! Thanks, ${n}.` });
-    setFname(""); setFemail(""); setFsubject(""); setFmessage("");
+
+    formData.set("access_key", WEB3FORMS_ACCESS_KEY);
+    formData.set("name", n);
+    formData.set("email", e);
+    formData.set("subject", s);
+    formData.set("message", m);
+
+    try {
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        body: formData,
+      });
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || "Unable to send message.");
+      }
+
+      setFormStatus({ type: "success", msg: "Message sent successfully." });
+      setFname(""); setFemail(""); setFsubject(""); setFmessage("");
+      form.reset();
+    } catch {
+      setFormStatus({ type: "error", msg: "Something went wrong. Please try again." });
+    }
   }
 
   const LC: Record<string, string> = { Python: "#3572A5", JavaScript: "#f1e05a", TypeScript: "#2b7489", HTML: "#e34c26", CSS: "#563d7c", "Jupyter Notebook": "#DA5B0B", default: "#8892b0" };
@@ -371,16 +401,13 @@ export default function Portfolio() {
         <div className="hero-inner">
           <div className="hero-photo-wrap">
             <div className="photo-hex">
-              <div className="photo-inner" style={{display:'flex',alignItems:'center',justifyContent:'center',background:'linear-gradient(135deg,#2251e3 0%,#7c3aed 50%,#04b6ce 100%)'}}>
-                <span style={{fontFamily:'Clash Display,sans-serif',fontSize:'3.8rem',fontWeight:700,color:'#fff',letterSpacing:'-0.04em',lineHeight:1,userSelect:'none'}}>JK</span>
+              <div className="photo-inner">
+                <img src="/profile-photo.jpeg" alt="Jeet Kumar Singh profile photo" />
               </div>
             </div>
-            <div className="chip"><span className="cdot" style={{ background: "#2251e3" }} />Python 92%</div>
-            <div className="chip"><span className="cdot" style={{ background: "#FF9900" }} />Amazon ML ✓</div>
-            <div className="chip"><span className="cdot" style={{ background: "#10b981" }} />CGPA 7.54</div>
-            <div className="chip"><span className="cdot" style={{ background: "#7c3aed" }} />ISRO 2025 ✓</div>
           </div>
           <div className="hero-text">
+
             <div className="amz-badge">
               <span style={{ fontSize: ".85rem" }}>⭐</span>
               <span className="amz-logo">amazon</span>
@@ -401,11 +428,7 @@ export default function Portfolio() {
                 </svg>
                 Get in Touch
               </a>
-              <a
-                href="#"
-                className="btn btn-o"
-                onClick={e => { e.preventDefault(); alert("To enable CV download: upload your resume PDF and update this button's href to the file URL."); }}
-              >
+              <a href="/Resume.June2026.pdf" className="btn btn-o" target="_blank" rel="noopener noreferrer" download>
                 <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                   <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" />
                 </svg>
@@ -413,6 +436,12 @@ export default function Portfolio() {
               </a>
               <a href="https://github.com/JeetKumarSingh07" target="_blank" rel="noreferrer" className="btn btn-o">
                 <GitHubIcon /> GitHub
+              </a>
+              <a href="https://www.linkedin.com/in/jeet-kumar-singh-0622b73a9/" target="_blank" rel="noopener noreferrer" className="btn btn-o">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M6.94 6.5A2.44 2.44 0 1 1 2.06 6.5a2.44 2.44 0 0 1 4.88 0ZM2.4 8.74h4.9V22H2.4V8.74Zm8.23 0h4.7v1.82h.07c.65-1.23 2.25-2.52 4.63-2.52 4.95 0 5.86 3.26 5.86 7.5V22h-4.9v-5.55c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.15 1.45-2.15 2.95V22h-4.9V8.74Z" />
+                </svg>
+                LinkedIn
               </a>
             </div>
             <div className="hero-stats">
@@ -605,7 +634,7 @@ export default function Portfolio() {
         </div>
       </section>
 
-      <section id="gh-repos">
+      {/* <section id="gh-repos">
         <div className="fade-up">
           <p className="sec-label">GitHub</p>
           <h2 className="sec-title g-green">Live Repositories</h2>
@@ -638,7 +667,7 @@ export default function Portfolio() {
             </div>
           )}
         </div>
-      </section>
+      </section> */}
 
       <section id="experience">
         <div className="fade-up">
@@ -652,7 +681,7 @@ export default function Portfolio() {
                 <div className="intern-badge">🟢 Active — Current Internship</div>
                 <div className="trole">Data Analyst Intern</div>
                 <div className="tco">AppZime Technologies · Lucknow, UP</div>
-                <div className="tperiod">Jun 2026 – Aug 2026 · ₹10,000/month</div>
+                <div className="tperiod">Jun 2026 – Aug 2026 · </div>
                 <p className="tdesc">Structured training &amp; development programme applying Python, SQL, Power BI and statistical analysis to real business datasets.</p>
               </div>
             </div>
@@ -783,11 +812,13 @@ export default function Portfolio() {
                   </svg>
                   <div><div className="cl-label">GitHub</div><div className="cl-val">JeetKumarSingh07</div></div>
                 </a>
-                <a
-                  href="#"
-                  className="contact-link"
-                  onClick={e => { e.preventDefault(); alert("To enable CV download: upload your resume PDF and update this button's href to the file URL."); }}
-                >
+                <a href="https://www.linkedin.com/in/jeet-kumar-singh-0622b73a9/" target="_blank" rel="noopener noreferrer" className="contact-link">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="#0c1422" aria-hidden="true">
+                    <path d="M6.94 6.5A2.44 2.44 0 1 1 2.06 6.5a2.44 2.44 0 0 1 4.88 0ZM2.4 8.74h4.9V22H2.4V8.74Zm8.23 0h4.7v1.82h.07c.65-1.23 2.25-2.52 4.63-2.52 4.95 0 5.86 3.26 5.86 7.5V22h-4.9v-5.55c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.15 1.45-2.15 2.95V22h-4.9V8.74Z" />
+                  </svg>
+                  <div><div className="cl-label">LinkedIn</div><div className="cl-val">jeet-kumar-singh-0622b73a9</div></div>
+                </a>
+                <a href="/Resume.June2026.pdf" className="contact-link" target="_blank" rel="noopener noreferrer" download>
                   <span style={{ fontSize: "1.1rem" }}>📄</span>
                   <div><div className="cl-label">Resume</div><div className="cl-val">Download PDF</div></div>
                 </a>
@@ -795,33 +826,34 @@ export default function Portfolio() {
             </div>
             <div>
               <div className="contact-head">Send a message</div>
-              <div className="contact-form">
+              <form className="contact-form" onSubmit={handleSend}>
+                <input type="hidden" name="access_key" value={WEB3FORMS_ACCESS_KEY} />
                 <div className="form-group">
                   <label className="form-label" htmlFor="fname">Your name</label>
-                  <input className="form-input" type="text" id="fname" placeholder="Rahul Sharma" value={fname} onChange={e => setFname(e.target.value)} />
+                  <input className="form-input" type="text" id="fname" name="name" placeholder="Rahul Sharma" value={fname} onChange={e => setFname(e.target.value)} />
                 </div>
                 <div className="form-group">
                   <label className="form-label" htmlFor="femail">Email address</label>
-                  <input className="form-input" type="email" id="femail" placeholder="you@example.com" value={femail} onChange={e => setFemail(e.target.value)} />
+                  <input className="form-input" type="email" id="femail" name="email" placeholder="you@example.com" value={femail} onChange={e => setFemail(e.target.value)} />
                 </div>
                 <div className="form-group">
                   <label className="form-label" htmlFor="fsubject">Subject</label>
-                  <input className="form-input" type="text" id="fsubject" placeholder="Opportunity / Collaboration" value={fsubject} onChange={e => setFsubject(e.target.value)} />
+                  <input className="form-input" type="text" id="fsubject" name="subject" placeholder="Opportunity / Collaboration" value={fsubject} onChange={e => setFsubject(e.target.value)} />
                 </div>
                 <div className="form-group">
                   <label className="form-label" htmlFor="fmessage">Message</label>
-                  <textarea className="form-textarea" id="fmessage" placeholder="Hi Jeet, I'd like to discuss…" value={fmessage} onChange={e => setFmessage(e.target.value)} />
+                  <textarea className="form-textarea" id="fmessage" name="message" placeholder="Hi Jeet, I'd like to discuss…" value={fmessage} onChange={e => setFmessage(e.target.value)} />
                 </div>
                 {formStatus.type && (
                   <div id="form-status" className={formStatus.type} style={{ display: "block" }}>{formStatus.type === "error" ? "⚠️ " : "✅ "}{formStatus.msg}</div>
                 )}
-                <button className="btn btn-p" onClick={handleSend} type="button" style={{ width: "100%", justifyContent: "center" }}>
+                <button className="btn btn-p" type="submit" style={{ width: "100%", justifyContent: "center" }}>
                   <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                     <line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" />
                   </svg>
                   Send Message
                 </button>
-              </div>
+              </form>
             </div>
           </div>
         </div>

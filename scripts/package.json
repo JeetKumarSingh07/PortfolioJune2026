@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "hello": "tsx ./src/hello.ts",
+    "start-render": "tsx ./src/start-render.ts",
     "sync-render-build": "tsx ./src/sync-render-build.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
